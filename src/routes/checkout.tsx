@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { CheckCircle2, CreditCard, Landmark, Wallet } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { sendOrderConfirmation } from "@/lib/orders.functions";
 import { PageHeader, ResearchDisclaimer } from "@/components/site/blocks";
 import { CheckoutSteps } from "@/components/site/CheckoutSteps";
 import { FREE_SHIPPING_THRESHOLD, formatEUR, formatRef } from "@/lib/catalog";
@@ -47,6 +50,10 @@ function Checkout() {
   const [payment, setPayment] = useState("card");
   const [placed, setPlaced] = useState<string | null>(null);
   const [ack, setAck] = useState(false);
+  const [contact, setContact] = useState({ name: "", email: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [emailed, setEmailed] = useState(false);
+  const sendConfirmation = useServerFn(sendOrderConfirmation);
 
   const selected = SHIPPING.find((s) => s.id === shipping) ?? SHIPPING[0]!;
   const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD && shipping === "standard" ? 0 : selected.price;
@@ -62,8 +69,10 @@ function Checkout() {
             <CheckCircle2 className="h-6 w-6 text-success" />
             <h2 className="mt-4 text-xl font-semibold">Order {placed}</h2>
             <p className="mt-3 text-sm text-muted-foreground">
-              A confirmation with batch numbers and Certificates of Analysis has been emailed to
-              you. Tracking is issued once the parcel leaves our EU facility — orders confirmed
+              {emailed
+                ? `A confirmation listing each peptide, its dosage and vial count has been emailed to ${contact.email}.`
+                : "Your order is confirmed. We could not deliver the confirmation email — contact us and we will resend it."}{" "}
+              Batch numbers and Certificates of Analysis follow with your tracking notification. Tracking is issued once the parcel leaves our EU facility — orders confirmed
               before 12:00 CET dispatch the same working day.
             </p>
             <dl className="mt-6 space-y-2 text-sm">
@@ -119,6 +128,11 @@ function Checkout() {
                 className="space-y-8"
                 onSubmit={(e) => {
                   e.preventDefault();
+                  const form = new FormData(e.currentTarget);
+                  setContact({
+                    name: String(form.get("name") ?? ""),
+                    email: String(form.get("email") ?? ""),
+                  });
                   setStep(3);
                 }}
               >
@@ -208,11 +222,45 @@ function Checkout() {
             ) : (
               <form
                 className="space-y-8"
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
+                  if (submitting) return;
+                  setSubmitting(true);
                   const ref = `HLV-${Math.floor(100000 + Math.random() * 899999)}`;
-                  clear();
-                  setPlaced(ref);
+                  try {
+                    const result = await sendConfirmation({
+                      data: {
+                        reference: ref,
+                        email: contact.email,
+                        customerName: contact.name || "Researcher",
+                        shippingLabel: selected.label,
+                        shippingEta: selected.eta,
+                        paymentLabel:
+                          PAYMENTS.find((p) => p.id === payment)?.label ?? "Card",
+                        lines: items.map(({ product, qty }) => ({
+                          name: product.name,
+                          dosage: product.spec,
+                          vials: qty,
+                          lineTotal: formatEUR(product.price * qty),
+                        })),
+                        subtotal: formatEUR(subtotal),
+                        shippingCost: shippingCost === 0 ? "Free" : formatEUR(shippingCost),
+                        vat: formatEUR(vat),
+                        total: formatEUR(total),
+                      },
+                    });
+                    setEmailed(Boolean(result?.sent));
+                    if (!result?.sent) {
+                      toast.error("Order placed, but the confirmation email could not be sent.");
+                    }
+                  } catch {
+                    setEmailed(false);
+                    toast.error("Order placed, but the confirmation email could not be sent.");
+                  } finally {
+                    setSubmitting(false);
+                    clear();
+                    setPlaced(ref);
+                  }
                 }}
               >
                 <section>
@@ -296,9 +344,10 @@ function Checkout() {
                   </button>
                   <button
                     type="submit"
-                    className="h-12 flex-1 rounded-md bg-accent text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 sm:flex-none sm:px-10"
+                    disabled={submitting}
+                    className="h-12 flex-1 disabled:opacity-60 rounded-md bg-accent text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 sm:flex-none sm:px-10"
                   >
-                    Place order · {formatEUR(total)}
+                    {submitting ? "Placing order…" : `Place order · ${formatEUR(total)}`}
                   </button>
                 </div>
               </form>
