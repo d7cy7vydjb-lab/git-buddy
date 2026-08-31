@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { BadgeCheck, FlaskConical, Lock, Truck } from "lucide-react";
-import logo from "@/assets/halvin-logo.png.asset.json";
+import logo from "@/assets/halvin-logo.png";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 
 const LEGAL = [
@@ -25,7 +25,7 @@ export function Footer() {
       <div className="container-page grid gap-12 py-14 md:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
-            <img src={logo.url} alt="" width={32} height={32} className="h-8 w-8" loading="lazy" />
+            <img src={logo} alt="" width={32} height={32} className="h-8 w-8" loading="lazy" />
             <span className="font-display text-sm font-semibold tracking-tight">
               HALVIN RESEARCH
             </span>

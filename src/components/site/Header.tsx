@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
-import logo from "@/assets/halvin-logo.png.asset.json";
+import logo from "@/assets/halvin-logo.png";
 import { useCart } from "@/lib/cart";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +23,7 @@ export function Header() {
       <div className="container-page grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-3.5 lg:flex lg:justify-between">
         <Link to="/" className="flex min-w-0 items-center gap-3">
           <img
-            src={logo.url}
+            src={logo}
             alt="Halvin Research"
             width={36}
             height={36}
