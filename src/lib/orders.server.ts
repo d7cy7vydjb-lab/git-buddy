@@ -45,16 +45,18 @@ export function renderOrderEmail(order: OrderEmailPayload) {
     )
     .join("");
 
-  const totals: [string, string][] = [
+  const totalRows: Array<[string, string]> = [
     ["Subtotal", order.subtotal],
     [`${order.shippingLabel} shipping`, order.shippingCost],
     ["VAT (21%)", order.vat],
-  ]
+  ];
+  const totals = totalRows
     .map(
       ([label, value]) =>
         `<tr><td style="padding:4px 0;font-size:13px;color:#64748b;">${escapeHtml(label)}</td><td style="padding:4px 0;text-align:right;font-size:13px;color:#0b1220;">${escapeHtml(value)}</td></tr>`,
     )
     .join("");
+
 
   return `<!doctype html>
 <html><body style="margin:0;background:#f6f7f9;font-family:Helvetica,Arial,sans-serif;">
