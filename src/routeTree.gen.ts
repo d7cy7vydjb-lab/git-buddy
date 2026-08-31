@@ -27,6 +27,7 @@ import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ProductProductIdRouteImport } from './routes/product.$productId'
 import { Route as RuoIndexRouteImport } from './routes/ruo.index'
+import { Route as RuoCertificateOfAnalysisRouteImport } from './routes/ruo.certificate-of-analysis'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -118,6 +119,12 @@ const RuoIndexRoute = RuoIndexRouteImport.update({
   path: '/',
   getParentRoute: () => RuoRoute,
 } as any)
+const RuoCertificateOfAnalysisRoute =
+  RuoCertificateOfAnalysisRouteImport.update({
+    id: '/certificate-of-analysis',
+    path: '/certificate-of-analysis',
+    getParentRoute: () => RuoRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/ruo/certificate-of-analysis': typeof RuoCertificateOfAnalysisRoute
   '/blog/': typeof BlogIndexRoute
   '/ruo/': typeof RuoIndexRoute
 }
@@ -154,6 +162,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/ruo/certificate-of-analysis': typeof RuoCertificateOfAnalysisRoute
   '/blog': typeof BlogIndexRoute
   '/ruo': typeof RuoIndexRoute
 }
@@ -175,6 +184,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/ruo/certificate-of-analysis': typeof RuoCertificateOfAnalysisRoute
   '/blog/': typeof BlogIndexRoute
   '/ruo/': typeof RuoIndexRoute
 }
@@ -197,6 +207,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/product/$productId'
+    | '/ruo/certificate-of-analysis'
     | '/blog/'
     | '/ruo/'
   fileRoutesByTo: FileRoutesByTo
@@ -215,6 +226,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/product/$productId'
+    | '/ruo/certificate-of-analysis'
     | '/blog'
     | '/ruo'
   id:
@@ -235,6 +247,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/product/$productId'
+    | '/ruo/certificate-of-analysis'
     | '/blog/'
     | '/ruo/'
   fileRoutesById: FileRoutesById
@@ -385,6 +398,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RuoIndexRouteImport
       parentRoute: typeof RuoRoute
     }
+    '/ruo/certificate-of-analysis': {
+      id: '/ruo/certificate-of-analysis'
+      path: '/certificate-of-analysis'
+      fullPath: '/ruo/certificate-of-analysis'
+      preLoaderRoute: typeof RuoCertificateOfAnalysisRouteImport
+      parentRoute: typeof RuoRoute
+    }
   }
 }
 
@@ -401,10 +421,12 @@ const BlogRouteChildren: BlogRouteChildren = {
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface RuoRouteChildren {
+  RuoCertificateOfAnalysisRoute: typeof RuoCertificateOfAnalysisRoute
   RuoIndexRoute: typeof RuoIndexRoute
 }
 
 const RuoRouteChildren: RuoRouteChildren = {
+  RuoCertificateOfAnalysisRoute: RuoCertificateOfAnalysisRoute,
   RuoIndexRoute: RuoIndexRoute,
 }
 
