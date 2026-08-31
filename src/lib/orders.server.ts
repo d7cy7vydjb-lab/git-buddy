@@ -45,7 +45,7 @@ export function renderOrderEmail(order: OrderEmailPayload) {
     )
     .join("");
 
-  const totals = [
+  const totals: [string, string][] = [
     ["Subtotal", order.subtotal],
     [`${order.shippingLabel} shipping`, order.shippingCost],
     ["VAT (21%)", order.vat],
