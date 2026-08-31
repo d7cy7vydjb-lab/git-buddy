@@ -19,7 +19,10 @@ export type Product = {
   reviews: number;
   popularity: number;
   added: number;
+  description?: string;
+  image?: string | null;
 };
+
 
 export type Category = { id: string; name: string; blurb: string };
 
