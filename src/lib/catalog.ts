@@ -38,7 +38,8 @@ export function formatEUR(value: number) {
   return new Intl.NumberFormat("en-IE", {
     style: "currency",
     currency: "EUR",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(value);
 }
 
@@ -76,12 +77,12 @@ export function relatedProducts(product: Product, limit = 8) {
 }
 
 export const FEATURED_IDS = [
-  "tirzepatide",
+  "bpc-157",
+  "tb-500",
   "retatrutide",
-  "bpc-tb",
-  "semaglutide",
-  "cjc-1295-no-dac-5mg-ipa-5mg",
   "ghk-cu",
+  "cjc-1295-no-dac",
+  "ipamorelin",
 ];
 
 
