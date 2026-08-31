@@ -57,6 +57,7 @@ export function categoryCount(id: string) {
 }
 
 export function productImage(product: Product) {
+  if (product.image) return product.image;
   if (product.category === "solutions-solvents") return vialSolvent;
   if (/\+/.test(product.name) || /blend/i.test(product.name)) return vialDuo;
   if (["anti-aging-skincare", "hair-growth", "wellness-supplements"].includes(product.category))
@@ -77,11 +78,12 @@ export function relatedProducts(product: Product, limit = 8) {
 export const FEATURED_IDS = [
   "tirzepatide",
   "retatrutide",
-  "bpc-157-tb-500",
+  "bpc-tb",
   "semaglutide",
-  "cjc-1295-ipamorelin",
+  "cjc-1295-no-dac-5mg-ipa-5mg",
   "ghk-cu",
 ];
+
 
 export const featuredProducts = FEATURED_IDS.map((id) => getProduct(id)).filter(
   (p): p is Product => Boolean(p),
