@@ -26,6 +26,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ProductProductIdRouteImport } from './routes/product.$productId'
+import { Route as RuoIndexRouteImport } from './routes/ruo.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -112,6 +113,11 @@ const ProductProductIdRoute = ProductProductIdRouteImport.update({
   path: '/product/$productId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RuoIndexRoute = RuoIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RuoRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,13 +130,14 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
-  '/ruo': typeof RuoRoute
+  '/ruo': typeof RuoRouteWithChildren
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/ruo/': typeof RuoIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,13 +149,13 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
-  '/ruo': typeof RuoRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
   '/blog': typeof BlogIndexRoute
+  '/ruo': typeof RuoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -162,13 +169,14 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
-  '/ruo': typeof RuoRoute
+  '/ruo': typeof RuoRouteWithChildren
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/ruo/': typeof RuoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -190,6 +198,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/product/$productId'
     | '/blog/'
+    | '/ruo/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -201,13 +210,13 @@ export interface FileRouteTypes {
     | '/faq'
     | '/privacy'
     | '/returns'
-    | '/ruo'
     | '/shipping-policy'
     | '/shop'
     | '/terms'
     | '/blog/$slug'
     | '/product/$productId'
     | '/blog'
+    | '/ruo'
   id:
     | '__root__'
     | '/'
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
     | '/blog/$slug'
     | '/product/$productId'
     | '/blog/'
+    | '/ruo/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -240,7 +250,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
   ReturnsRoute: typeof ReturnsRoute
-  RuoRoute: typeof RuoRoute
+  RuoRoute: typeof RuoRouteWithChildren
   ShippingPolicyRoute: typeof ShippingPolicyRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
@@ -368,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ruo/': {
+      id: '/ruo/'
+      path: '/'
+      fullPath: '/ruo/'
+      preLoaderRoute: typeof RuoIndexRouteImport
+      parentRoute: typeof RuoRoute
+    }
   }
 }
 
@@ -383,6 +400,16 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface RuoRouteChildren {
+  RuoIndexRoute: typeof RuoIndexRoute
+}
+
+const RuoRouteChildren: RuoRouteChildren = {
+  RuoIndexRoute: RuoIndexRoute,
+}
+
+const RuoRouteWithChildren = RuoRoute._addFileChildren(RuoRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -394,7 +421,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
   ReturnsRoute: ReturnsRoute,
-  RuoRoute: RuoRoute,
+  RuoRoute: RuoRouteWithChildren,
   ShippingPolicyRoute: ShippingPolicyRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,
