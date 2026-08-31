@@ -21,23 +21,26 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-xl">
       <div className="container-page grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-3.5 lg:flex lg:justify-between">
-        <Link to="/" className="flex min-w-0 items-center gap-3">
-          <img
-            src={logo}
-            alt="Halvin Research"
-            width={36}
-            height={36}
-            className="h-9 w-9 shrink-0"
-          />
+        <Link to="/" className="group flex min-w-0 items-center gap-3">
+          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ring-border/70 transition-all duration-300 group-hover:ring-primary/50 group-hover:shadow-[0_0_18px_-6px_hsl(var(--primary)/0.55)]">
+            <img
+              src={logo}
+              alt="Halvin Research molecular emblem"
+              width={40}
+              height={40}
+              className="h-8 w-8 object-contain"
+            />
+          </span>
           <span className="min-w-0">
             <span className="block truncate font-display text-base font-semibold tracking-tight">
-              HALVIN RESEARCH
+              HALVIN <span className="text-primary">RESEARCH</span>
             </span>
             <span className="hidden font-mono text-[10px] tracking-[0.2em] text-muted-foreground sm:block">
               EU RESEARCH PEPTIDE SUPPLY
             </span>
           </span>
         </Link>
+
 
         <nav className="hidden items-center gap-7 lg:flex">
           {NAV.map((item) => (
