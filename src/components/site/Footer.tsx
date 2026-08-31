@@ -4,6 +4,10 @@ import logo from "@/assets/halvin-logo.png";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 
 const LEGAL = [
+  { to: "/ruo/certificate-of-analysis", label: "Certificate of Analysis" },
+  { to: "/ruo/shipping", label: "RUO shipping & handling" },
+  { to: "/ruo/storage", label: "Storage & reconstitution" },
+  { to: "/ruo/compliance", label: "Research compliance" },
   { to: "/privacy", label: "Privacy Policy" },
   { to: "/terms", label: "Terms & Conditions" },
   { to: "/shipping-policy", label: "Shipping Policy" },
@@ -13,6 +17,7 @@ const LEGAL = [
 
 const SHOP = [
   { to: "/shop", label: "All peptides" },
+  { to: "/ruo", label: "RUO programme" },
   { to: "/categories", label: "Categories" },
   { to: "/faq", label: "FAQ" },
   { to: "/blog", label: "Research notes" },
