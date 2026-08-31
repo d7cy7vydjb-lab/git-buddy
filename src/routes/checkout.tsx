@@ -1,0 +1,349 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { CheckCircle2, CreditCard, Landmark, Wallet } from "lucide-react";
+import { useState } from "react";
+import { PageHeader, ResearchDisclaimer } from "@/components/site/blocks";
+import { CheckoutSteps } from "@/components/site/CheckoutSteps";
+import { FREE_SHIPPING_THRESHOLD, formatEUR, formatRef } from "@/lib/catalog";
+import { useCart } from "@/lib/cart";
+import { cn } from "@/lib/utils";
+
+export const Route = createFileRoute("/checkout")({
+  head: () => ({
+    meta: [
+      { title: "Secure Checkout | Halvin Research" },
+      {
+        name: "description",
+        content:
+          "Three-step checkout with standard, express and overnight EU shipping. Pay by card, bank transfer or PayPal.",
+      },
+      { property: "og:title", content: "Secure Checkout | Halvin Research" },
+      {
+        property: "og:description",
+        content: "Standard, express and overnight EU shipping. Card, bank transfer or PayPal.",
+      },
+    ],
+  }),
+  component: Checkout,
+});
+
+const SHIPPING = [
+  { id: "standard", label: "Standard", eta: "5–7 working days", price: 14 },
+  { id: "express", label: "Express", eta: "2–3 working days", price: 24 },
+  { id: "overnight", label: "Overnight", eta: "Next working day", price: 39 },
+];
+
+const PAYMENTS = [
+  { id: "card", label: "Card", note: "Visa, Mastercard, Amex", icon: CreditCard },
+  { id: "transfer", label: "Bank transfer", note: "SEPA — 1–2 days to clear", icon: Landmark },
+  { id: "paypal", label: "PayPal", note: "Buyer-protected", icon: Wallet },
+];
+
+const COUNTRIES = ["United Kingdom", "Germany", "Spain", "Italy", "France", "Netherlands", "Ireland"];
+
+function Checkout() {
+  const { items, subtotal, clear } = useCart();
+  const [step, setStep] = useState<2 | 3>(2);
+  const [shipping, setShipping] = useState("express");
+  const [payment, setPayment] = useState("card");
+  const [placed, setPlaced] = useState<string | null>(null);
+  const [ack, setAck] = useState(false);
+
+  const selected = SHIPPING.find((s) => s.id === shipping) ?? SHIPPING[0]!;
+  const shippingCost = subtotal >= FREE_SHIPPING_THRESHOLD && shipping === "standard" ? 0 : selected.price;
+  const vat = Math.round((subtotal + shippingCost) * 0.21);
+  const total = subtotal + shippingCost + vat;
+
+  if (placed) {
+    return (
+      <>
+        <PageHeader eyebrow="Order confirmed" title="Thank you — your order is being prepared" />
+        <div className="container-page py-14">
+          <div className="panel max-w-2xl p-8">
+            <CheckCircle2 className="h-6 w-6 text-success" />
+            <h2 className="mt-4 text-xl font-semibold">Order {placed}</h2>
+            <p className="mt-3 text-sm text-muted-foreground">
+              A confirmation with batch numbers and Certificates of Analysis has been emailed to
+              you. Tracking is issued once the parcel leaves our EU facility — orders confirmed
+              before 12:00 CET dispatch the same working day.
+            </p>
+            <dl className="mt-6 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Service</dt>
+                <dd>
+                  {selected.label} · {selected.eta}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Payment</dt>
+                <dd>{PAYMENTS.find((p) => p.id === payment)?.label}</dd>
+              </div>
+            </dl>
+            <Link
+              to="/shop"
+              className="mt-8 inline-flex h-11 items-center rounded-md border border-border px-6 text-sm font-semibold transition-colors hover:border-accent hover:text-accent"
+            >
+              Back to catalogue
+            </Link>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <>
+        <PageHeader eyebrow="Checkout" title="Nothing to check out yet" />
+        <div className="container-page py-14">
+          <Link
+            to="/shop"
+            className="inline-flex h-11 items-center rounded-md bg-accent px-6 text-sm font-semibold text-accent-foreground"
+          >
+            Browse the catalogue
+          </Link>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <PageHeader eyebrow={`Step ${step} of 3`} title="Checkout" />
+      <div className="container-page py-12">
+        <CheckoutSteps current={step} />
+
+        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <div>
+            {step === 2 ? (
+              <form
+                className="space-y-8"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setStep(3);
+                }}
+              >
+                <section>
+                  <h2 className="text-lg font-semibold">Shipping details</h2>
+                  <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                    {[
+                      ["Full name", "name", "text"],
+                      ["Institution / company", "org", "text"],
+                      ["Email", "email", "email"],
+                      ["Phone", "phone", "tel"],
+                      ["Address", "address", "text"],
+                      ["City", "city", "text"],
+                      ["Postcode", "postcode", "text"],
+                    ].map(([label, name, type]) => (
+                      <label key={name} className="text-sm">
+                        <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                          {label}
+                        </span>
+                        <input
+                          required={name !== "org" && name !== "phone"}
+                          name={name}
+                          type={type}
+                          className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3.5 text-sm outline-none focus:border-accent"
+                        />
+                      </label>
+                    ))}
+                    <label className="text-sm">
+                      <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                        Country
+                      </span>
+                      <select
+                        name="country"
+                        className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-accent"
+                      >
+                        {COUNTRIES.map((c) => (
+                          <option key={c}>{c}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                </section>
+
+                <section>
+                  <h2 className="text-lg font-semibold">Delivery service</h2>
+                  <div className="mt-5 space-y-3">
+                    {SHIPPING.map((s) => (
+                      <label
+                        key={s.id}
+                        className={cn(
+                          "flex cursor-pointer items-center justify-between gap-4 rounded-md border p-4 text-sm transition-colors",
+                          shipping === s.id ? "border-accent" : "border-border",
+                        )}
+                      >
+                        <span className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="shipping"
+                            checked={shipping === s.id}
+                            onChange={() => setShipping(s.id)}
+                            className="h-4 w-4 accent-accent"
+                          />
+                          <span>
+                            <span className="block font-semibold">{s.label}</span>
+                            <span className="font-mono text-[11px] text-muted-foreground">
+                              {s.eta}
+                            </span>
+                          </span>
+                        </span>
+                        <span className="font-display font-semibold">
+                          {subtotal >= FREE_SHIPPING_THRESHOLD && s.id === "standard"
+                            ? "Free"
+                            : formatEUR(s.price)}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </section>
+
+                <button
+                  type="submit"
+                  className="h-12 w-full rounded-md bg-accent text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 sm:w-64"
+                >
+                  Continue to payment
+                </button>
+              </form>
+            ) : (
+              <form
+                className="space-y-8"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const ref = `HLV-${Math.floor(100000 + Math.random() * 899999)}`;
+                  clear();
+                  setPlaced(ref);
+                }}
+              >
+                <section>
+                  <h2 className="text-lg font-semibold">Payment method</h2>
+                  <div className="mt-5 space-y-3">
+                    {PAYMENTS.map(({ id, label, note, icon: Icon }) => (
+                      <label
+                        key={id}
+                        className={cn(
+                          "flex cursor-pointer items-center gap-3 rounded-md border p-4 text-sm transition-colors",
+                          payment === id ? "border-accent" : "border-border",
+                        )}
+                      >
+                        <input
+                          type="radio"
+                          name="payment"
+                          checked={payment === id}
+                          onChange={() => setPayment(id)}
+                          className="h-4 w-4 accent-accent"
+                        />
+                        <Icon className="h-4 w-4 text-accent" />
+                        <span>
+                          <span className="block font-semibold">{label}</span>
+                          <span className="font-mono text-[11px] text-muted-foreground">
+                            {note}
+                          </span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </section>
+
+                {payment === "card" && (
+                  <section className="grid gap-4 sm:grid-cols-2">
+                    {[
+                      ["Card number", "cc", "1234 5678 9012 3456"],
+                      ["Name on card", "ccname", ""],
+                      ["Expiry", "exp", "MM / YY"],
+                      ["CVC", "cvc", "123"],
+                    ].map(([label, name, ph]) => (
+                      <label key={name} className="text-sm">
+                        <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                          {label}
+                        </span>
+                        <input
+                          required
+                          name={name}
+                          placeholder={ph}
+                          className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3.5 text-sm outline-none placeholder:text-muted-foreground focus:border-accent"
+                        />
+                      </label>
+                    ))}
+                  </section>
+                )}
+
+                <label className="flex items-start gap-3 text-sm text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={ack}
+                    onChange={(e) => setAck(e.target.checked)}
+                    className="mt-1 h-4 w-4 accent-accent"
+                  />
+                  <span>
+                    I am 18 years or older, I am purchasing these materials for laboratory research
+                    use only, and I accept the{" "}
+                    <Link to="/terms" className="text-accent hover:underline">
+                      Terms &amp; Conditions
+                    </Link>
+                    .
+                  </span>
+                </label>
+
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setStep(2)}
+                    className="h-12 rounded-md border border-border px-6 text-sm font-semibold transition-colors hover:border-accent"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    className="h-12 flex-1 rounded-md bg-accent text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 sm:flex-none sm:px-10"
+                  >
+                    Place order · {formatEUR(total)}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+
+          <aside className="panel h-fit p-6">
+            <h2 className="text-lg font-semibold">Order summary</h2>
+            <ul className="mt-5 space-y-3 text-sm">
+              {items.map(({ product, qty }) => (
+                <li key={product.id} className="flex justify-between gap-3">
+                  <span className="min-w-0 truncate text-muted-foreground">
+                    {qty} × {product.name}
+                  </span>
+                  <span>{formatEUR(product.price * qty)}</span>
+                </li>
+              ))}
+            </ul>
+            <dl className="mt-5 space-y-2 border-t border-border pt-4 text-sm">
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Subtotal</dt>
+                <dd>{formatEUR(subtotal)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">{selected.label} shipping</dt>
+                <dd>{shippingCost === 0 ? "Free" : formatEUR(shippingCost)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">VAT (21%)</dt>
+                <dd>{formatEUR(vat)}</dd>
+              </div>
+              <div className="flex justify-between border-t border-border pt-3 font-display text-base font-semibold">
+                <dt>Total</dt>
+                <dd>{formatEUR(total)}</dd>
+              </div>
+              <p className="font-mono text-[10px] text-muted-foreground">{formatRef(total)}</p>
+            </dl>
+            <p className="mt-5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+              Tracking issued on dispatch
+            </p>
+          </aside>
+        </div>
+
+        <ResearchDisclaimer className="mt-12" />
+      </div>
+    </>
+  );
+}
