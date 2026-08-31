@@ -19,12 +19,18 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ReturnsRouteImport } from './routes/returns'
+import { Route as RuoRouteImport } from './routes/ruo'
 import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ProductProductIdRouteImport } from './routes/product.$productId'
+import { Route as RuoIndexRouteImport } from './routes/ruo.index'
+import { Route as RuoCertificateOfAnalysisRouteImport } from './routes/ruo.certificate-of-analysis'
+import { Route as RuoComplianceRouteImport } from './routes/ruo.compliance'
+import { Route as RuoShippingRouteImport } from './routes/ruo.shipping'
+import { Route as RuoStorageRouteImport } from './routes/ruo.storage'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +82,11 @@ const ReturnsRoute = ReturnsRouteImport.update({
   path: '/returns',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RuoRoute = RuoRouteImport.update({
+  id: '/ruo',
+  path: '/ruo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
   id: '/shipping-policy',
   path: '/shipping-policy',
@@ -106,6 +117,32 @@ const ProductProductIdRoute = ProductProductIdRouteImport.update({
   path: '/product/$productId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RuoIndexRoute = RuoIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RuoRoute,
+} as any)
+const RuoCertificateOfAnalysisRoute =
+  RuoCertificateOfAnalysisRouteImport.update({
+    id: '/certificate-of-analysis',
+    path: '/certificate-of-analysis',
+    getParentRoute: () => RuoRoute,
+  } as any)
+const RuoComplianceRoute = RuoComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => RuoRoute,
+} as any)
+const RuoShippingRoute = RuoShippingRouteImport.update({
+  id: '/shipping',
+  path: '/shipping',
+  getParentRoute: () => RuoRoute,
+} as any)
+const RuoStorageRoute = RuoStorageRouteImport.update({
+  id: '/storage',
+  path: '/storage',
+  getParentRoute: () => RuoRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -118,12 +155,18 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
+  '/ruo': typeof RuoRouteWithChildren
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/ruo/certificate-of-analysis': typeof RuoCertificateOfAnalysisRoute
+  '/ruo/compliance': typeof RuoComplianceRoute
+  '/ruo/shipping': typeof RuoShippingRoute
+  '/ruo/storage': typeof RuoStorageRoute
   '/blog/': typeof BlogIndexRoute
+  '/ruo/': typeof RuoIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -140,7 +183,12 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/ruo/certificate-of-analysis': typeof RuoCertificateOfAnalysisRoute
+  '/ruo/compliance': typeof RuoComplianceRoute
+  '/ruo/shipping': typeof RuoShippingRoute
+  '/ruo/storage': typeof RuoStorageRoute
   '/blog': typeof BlogIndexRoute
+  '/ruo': typeof RuoIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -154,12 +202,18 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
   '/returns': typeof ReturnsRoute
+  '/ruo': typeof RuoRouteWithChildren
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/product/$productId': typeof ProductProductIdRoute
+  '/ruo/certificate-of-analysis': typeof RuoCertificateOfAnalysisRoute
+  '/ruo/compliance': typeof RuoComplianceRoute
+  '/ruo/shipping': typeof RuoShippingRoute
+  '/ruo/storage': typeof RuoStorageRoute
   '/blog/': typeof BlogIndexRoute
+  '/ruo/': typeof RuoIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -174,12 +228,18 @@ export interface FileRouteTypes {
     | '/faq'
     | '/privacy'
     | '/returns'
+    | '/ruo'
     | '/shipping-policy'
     | '/shop'
     | '/terms'
     | '/blog/$slug'
     | '/product/$productId'
+    | '/ruo/certificate-of-analysis'
+    | '/ruo/compliance'
+    | '/ruo/shipping'
+    | '/ruo/storage'
     | '/blog/'
+    | '/ruo/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -196,7 +256,12 @@ export interface FileRouteTypes {
     | '/terms'
     | '/blog/$slug'
     | '/product/$productId'
+    | '/ruo/certificate-of-analysis'
+    | '/ruo/compliance'
+    | '/ruo/shipping'
+    | '/ruo/storage'
     | '/blog'
+    | '/ruo'
   id:
     | '__root__'
     | '/'
@@ -209,12 +274,18 @@ export interface FileRouteTypes {
     | '/faq'
     | '/privacy'
     | '/returns'
+    | '/ruo'
     | '/shipping-policy'
     | '/shop'
     | '/terms'
     | '/blog/$slug'
     | '/product/$productId'
+    | '/ruo/certificate-of-analysis'
+    | '/ruo/compliance'
+    | '/ruo/shipping'
+    | '/ruo/storage'
     | '/blog/'
+    | '/ruo/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -228,6 +299,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
   ReturnsRoute: typeof ReturnsRoute
+  RuoRoute: typeof RuoRouteWithChildren
   ShippingPolicyRoute: typeof ShippingPolicyRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
@@ -306,6 +378,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReturnsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ruo': {
+      id: '/ruo'
+      path: '/ruo'
+      fullPath: '/ruo'
+      preLoaderRoute: typeof RuoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shipping-policy': {
       id: '/shipping-policy'
       path: '/shipping-policy'
@@ -348,6 +427,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ruo/': {
+      id: '/ruo/'
+      path: '/'
+      fullPath: '/ruo/'
+      preLoaderRoute: typeof RuoIndexRouteImport
+      parentRoute: typeof RuoRoute
+    }
+    '/ruo/certificate-of-analysis': {
+      id: '/ruo/certificate-of-analysis'
+      path: '/certificate-of-analysis'
+      fullPath: '/ruo/certificate-of-analysis'
+      preLoaderRoute: typeof RuoCertificateOfAnalysisRouteImport
+      parentRoute: typeof RuoRoute
+    }
+    '/ruo/compliance': {
+      id: '/ruo/compliance'
+      path: '/compliance'
+      fullPath: '/ruo/compliance'
+      preLoaderRoute: typeof RuoComplianceRouteImport
+      parentRoute: typeof RuoRoute
+    }
+    '/ruo/shipping': {
+      id: '/ruo/shipping'
+      path: '/shipping'
+      fullPath: '/ruo/shipping'
+      preLoaderRoute: typeof RuoShippingRouteImport
+      parentRoute: typeof RuoRoute
+    }
+    '/ruo/storage': {
+      id: '/ruo/storage'
+      path: '/storage'
+      fullPath: '/ruo/storage'
+      preLoaderRoute: typeof RuoStorageRouteImport
+      parentRoute: typeof RuoRoute
+    }
   }
 }
 
@@ -363,6 +477,24 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface RuoRouteChildren {
+  RuoCertificateOfAnalysisRoute: typeof RuoCertificateOfAnalysisRoute
+  RuoComplianceRoute: typeof RuoComplianceRoute
+  RuoShippingRoute: typeof RuoShippingRoute
+  RuoStorageRoute: typeof RuoStorageRoute
+  RuoIndexRoute: typeof RuoIndexRoute
+}
+
+const RuoRouteChildren: RuoRouteChildren = {
+  RuoCertificateOfAnalysisRoute: RuoCertificateOfAnalysisRoute,
+  RuoComplianceRoute: RuoComplianceRoute,
+  RuoShippingRoute: RuoShippingRoute,
+  RuoStorageRoute: RuoStorageRoute,
+  RuoIndexRoute: RuoIndexRoute,
+}
+
+const RuoRouteWithChildren = RuoRoute._addFileChildren(RuoRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -374,6 +506,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
   ReturnsRoute: ReturnsRoute,
+  RuoRoute: RuoRouteWithChildren,
   ShippingPolicyRoute: ShippingPolicyRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,
