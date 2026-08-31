@@ -164,6 +164,17 @@ function ProductDetail() {
               <Download className="h-4 w-4" /> Download Certificate of Analysis (PDF)
             </a>
 
+            {product.description ? (
+              <div className="mt-8 border-t border-border pt-6">
+                <h2 className="eyebrow">Product description</h2>
+                <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                  {product.description}
+                </p>
+              </div>
+            ) : null}
+
+
+
             <dl className="mt-9 divide-y divide-border border-y border-border text-sm">
               {[
                 ["Format", `Lyophilised powder — ${product.spec}`],
