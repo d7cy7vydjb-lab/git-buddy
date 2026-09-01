@@ -9,8 +9,11 @@ import {
   categoryName,
   formatEUR,
   formatRef,
+  penProducts,
+  productFormat,
   productImage,
   products,
+  vialProducts,
 } from "@/lib/catalog";
 import { useCart } from "@/lib/cart";
 import { cn } from "@/lib/utils";
@@ -22,6 +25,7 @@ type ShopSearch = {
   max?: number | undefined;
   purity?: string | undefined;
   stock?: string | undefined;
+  format?: string | undefined;
 };
 
 export const Route = createFileRoute("/shop")({
@@ -31,23 +35,24 @@ export const Route = createFileRoute("/shop")({
     if (typeof search["sort"] === "string") out.sort = search["sort"];
     if (typeof search["purity"] === "string") out.purity = search["purity"];
     if (typeof search["stock"] === "string") out.stock = search["stock"];
+    if (search["format"] === "pen" || search["format"] === "vial") out.format = search["format"];
     const max = Number(search["max"]);
     if (Number.isFinite(max) && max > 0) out.max = max;
     return out;
   },
   head: () => ({
     meta: [
-      { title: "Shop Research Peptides — 70 Verified Compounds | Halvin Research" },
+      { title: "Shop Research Peptides & Injection Pens | Halvin Labs" },
       {
         name: "description",
         content:
-          "Browse 70 research peptides with 99%+ HPLC purity, batch COAs and EUR pricing. Filter by category, price, purity and stock status.",
+          "Browse research peptide vials and pre-filled multi-dose injection pens with 99%+ HPLC purity, batch COAs and EUR pricing. Filter by format, category, price and stock.",
       },
-      { property: "og:title", content: "Shop Research Peptides | Halvin Research" },
+      { property: "og:title", content: "Shop Research Peptides & Injection Pens | Halvin Labs" },
       {
         property: "og:description",
         content:
-          "70 research-grade peptides with published HPLC data, EUR pricing and fast EU dispatch.",
+          "Research-grade peptide vials and pre-filled injection pens with published HPLC data, EUR pricing and fast EU dispatch.",
       },
     ],
   }),
@@ -78,6 +83,7 @@ function Shop() {
 
   const list = useMemo(() => {
     let out = products.filter((p) => p.price <= max);
+    if (search.format) out = out.filter((p) => productFormat(p) === search.format);
     if (search.category) out = out.filter((p) => p.category === search.category);
     if (search.purity === "99") out = out.filter((p) => (p.purity ?? 0) >= 99);
     if (search.stock === "in-stock") out = out.filter((p) => p.stock !== "out-of-stock");
@@ -87,7 +93,7 @@ function Shop() {
     else if (sort === "newest") sorted.sort((a, b) => b.added - a.added);
     else sorted.sort((a, b) => b.popularity - a.popularity);
     return sorted;
-  }, [search.category, search.purity, search.stock, sort, max]);
+  }, [search.category, search.format, search.purity, search.stock, sort, max]);
 
   return (
     <>
@@ -108,6 +114,31 @@ function Shop() {
           </button>
 
           <div className={cn("space-y-8", filtersOpen ? "block" : "hidden lg:block")}>
+            <div>
+              <h2 className="eyebrow">Format</h2>
+              <div className="mt-3 grid grid-cols-3 gap-1.5 rounded-md border border-border p-1">
+                {[
+                  { id: undefined, label: "All", n: products.length },
+                  { id: "vial" as const, label: "Vials", n: vialProducts.length },
+                  { id: "pen" as const, label: "Pens", n: penProducts.length },
+                ].map((f) => (
+                  <button
+                    key={f.label}
+                    type="button"
+                    onClick={() => setSearch({ format: f.id })}
+                    className={cn(
+                      "h-9 rounded text-xs font-semibold transition-colors",
+                      (search.format ?? undefined) === f.id
+                        ? "bg-accent text-accent-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {f.label} ({f.n})
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div>
               <h2 className="eyebrow">Category</h2>
               <ul className="mt-3 space-y-1.5 text-sm">
