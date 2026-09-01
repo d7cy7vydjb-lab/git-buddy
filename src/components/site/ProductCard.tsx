@@ -4,6 +4,7 @@ import {
   categoryName,
   formatEUR,
   formatRef,
+  productFormat,
   productImage,
   type Product,
 } from "@/lib/catalog";
@@ -26,9 +27,26 @@ export function StockDot({ stock }: { stock: Product["stock"] }) {
   );
 }
 
+export function FormatTag({ product }: { product: Product }) {
+  const isPen = productFormat(product) === "pen";
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded border px-2 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em]",
+        isPen
+          ? "border-accent/50 bg-accent/10 text-accent"
+          : "border-border bg-secondary text-muted-foreground",
+      )}
+    >
+      {isPen ? "Injection pen" : "Vial"}
+    </span>
+  );
+}
+
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
   const soldOut = product.stock === "out-of-stock";
+  const isPen = productFormat(product) === "pen";
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-accent/50">
@@ -39,12 +57,15 @@ export function ProductCard({ product }: { product: Product }) {
       >
         <img
           src={productImage(product)}
-          alt={`${product.name} research vial`}
+          alt={`${product.name} ${isPen ? "research injection pen and carton" : "research vial"}`}
           width={912}
           height={912}
           loading="lazy"
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
         />
+        <span className="absolute right-3 top-3">
+          <FormatTag product={product} />
+        </span>
         {product.purity ? (
           <span className="absolute left-3 top-3 rounded border border-gold/40 bg-background/80 px-2 py-1 font-mono text-[10px] font-semibold tracking-[0.12em] text-gold backdrop-blur">
             {product.purity}% PURE

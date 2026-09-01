@@ -3,13 +3,14 @@ import { Download, Minus, Plus, ShieldCheck, Truck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ResearchDisclaimer, Stars } from "@/components/site/blocks";
-import { StockDot } from "@/components/site/ProductCard";
+import { FormatTag, StockDot } from "@/components/site/ProductCard";
 import {
   batchNumber,
   categoryName,
   formatEUR,
   formatRef,
   getProduct,
+  productFormat,
   productImage,
   relatedProducts,
   stockLabel,
@@ -54,6 +55,7 @@ function ProductDetail() {
   const { add } = useCart();
   const [qty, setQty] = useState(1);
   const soldOut = product.stock === "out-of-stock";
+  const isPen = productFormat(product) === "pen";
   const related = relatedProducts(product);
 
   return (
@@ -74,14 +76,17 @@ function ProductDetail() {
             <div className="overflow-hidden rounded-lg border border-border bg-surface">
               <img
                 src={productImage(product)}
-                alt={`${product.name} ${product.spec} research vial`}
+                alt={`${product.name} ${product.spec} ${isPen ? "research injection pen and carton" : "research vial"}`}
                 width={912}
                 height={912}
                 className="aspect-square w-full object-cover"
               />
             </div>
             <div className="mt-4 grid grid-cols-3 gap-3">
-              {["Vial", "Lyophilisate", "Packaging"].map((label) => (
+              {(isPen
+                ? ["Pen", "Dose dial", "Carton"]
+                : ["Vial", "Lyophilisate", "Packaging"]
+              ).map((label) => (
                 <div
                   key={label}
                   className="overflow-hidden rounded-md border border-border bg-surface"
