@@ -105,8 +105,12 @@ function ProductDetail() {
           </div>
 
           <div>
-            <p className="eyebrow">{categoryName(product.category)}</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="eyebrow">{categoryName(product.category)}</p>
+              <FormatTag product={product} />
+            </div>
             <h1 className="mt-3 text-3xl font-semibold md:text-4xl">{product.name}</h1>
+
             <div className="mt-4 flex flex-wrap items-center gap-4">
               <Stars value={product.rating} />
               <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
