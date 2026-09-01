@@ -6,6 +6,8 @@ import vialSolvent from "@/assets/vial-solvent.jpg";
 
 export type StockStatus = "in-stock" | "low-stock" | "out-of-stock";
 
+export type ProductFormat = "vial" | "pen";
+
 export type Product = {
   id: string;
   name: string;
@@ -21,6 +23,7 @@ export type Product = {
   added: number;
   description?: string;
   image?: string | null;
+  format?: ProductFormat;
 };
 
 
@@ -28,6 +31,19 @@ export type Category = { id: string; name: string; blurb: string };
 
 export const products = catalog.products as Product[];
 export const categories = catalog.categories as Category[];
+
+export function productFormat(product: Product): ProductFormat {
+  return product.format ?? "vial";
+}
+
+export const penProducts = products.filter((p) => productFormat(p) === "pen");
+export const vialProducts = products.filter((p) => productFormat(p) === "vial");
+
+export const formatLabel: Record<ProductFormat, string> = {
+  vial: "Vial",
+  pen: "Pen",
+};
+
 
 export const FREE_SHIPPING_THRESHOLD = 300;
 
