@@ -9,7 +9,14 @@ import {
   Stars,
   TrustBar,
 } from "@/components/site/blocks";
-import { categories, categoryCount, featuredProducts, products } from "@/lib/catalog";
+import {
+  categories,
+  categoryColor,
+  categoryCount,
+  featuredProducts,
+  penProducts,
+  products,
+} from "@/lib/catalog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -87,6 +94,7 @@ const FAQ_PREVIEW = [
 
 function Home() {
   const reviewCount = products.reduce((n, p) => n + p.reviews, 0);
+  const pens = penProducts.slice(0, 3);
 
   return (
     <>
@@ -120,7 +128,7 @@ function Home() {
           </div>
           <dl className="mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-border pt-7">
             {[
-              ["70", "Catalogue SKUs"],
+              [String(products.length), "Catalogue SKUs"],
               ["99%+", "HPLC purity"],
               ["24h", "EU dispatch"],
             ].map(([value, label]) => (
@@ -147,7 +155,7 @@ function Home() {
               to="/shop"
               className="inline-flex h-10 items-center gap-2 self-start rounded-md border border-border px-4 text-sm transition-colors hover:border-accent hover:text-accent"
             >
-              View all 70 <ArrowRight className="h-4 w-4" />
+              View all {products.length} <ArrowRight className="h-4 w-4" />
             </Link>
           }
         />
@@ -155,6 +163,30 @@ function Home() {
           {featuredProducts.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-surface py-20">
+        <div className="container-page">
+          <SectionHeading
+            eyebrow="New format"
+            title="Pre-filled research pens"
+            lead={`${penProducts.length} multi-dose injection pens with dose-marked barrels — no reconstitution, graduated increments for repeat-dose protocols. Research use only.`}
+            action={
+              <Link
+                to="/shop"
+                search={{ format: "pen" }}
+                className="inline-flex h-10 items-center gap-2 self-start rounded-md border border-border px-4 text-sm transition-colors hover:border-accent hover:text-accent"
+              >
+                All {penProducts.length} pens <ArrowRight className="h-4 w-4" />
+              </Link>
+            }
+          />
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {pens.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -169,11 +201,14 @@ function Home() {
             {categories.map((c) => (
               <div
                 key={c.id}
-                className="flex flex-col rounded-lg border border-border bg-card p-6 transition-colors hover:border-accent/50"
+                className={`flex flex-col rounded-lg border bg-card p-6 transition-colors ${categoryColor(c.id).border}`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-lg font-semibold">{c.name}</h3>
-                  <span className="shrink-0 rounded border border-border px-2 py-1 font-mono text-[10px] tracking-[0.12em] text-muted-foreground">
+                <span className={`h-1 w-10 rounded-full ${categoryColor(c.id).dot}`} />
+                <div className="mt-4 flex items-start justify-between gap-3">
+                  <h3 className={`text-lg font-semibold ${categoryColor(c.id).text}`}>{c.name}</h3>
+                  <span
+                    className={`shrink-0 rounded border px-2 py-1 font-mono text-[10px] tracking-[0.12em] ${categoryColor(c.id).border} ${categoryColor(c.id).bg} ${categoryColor(c.id).text}`}
+                  >
                     {categoryCount(c.id)} PRODUCTS
                   </span>
                 </div>
