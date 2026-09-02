@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { CheckCircle2, CreditCard, Landmark, Wallet } from "lucide-react";
+import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { sendOrderConfirmation } from "@/lib/orders.functions";
@@ -17,12 +17,12 @@ export const Route = createFileRoute("/checkout")({
       {
         name: "description",
         content:
-          "Three-step checkout with standard, express and overnight EU shipping. Pay by card, bank transfer or PayPal.",
+          "Three-step checkout with standard, express and overnight EU shipping for research-use-only peptide orders.",
       },
       { property: "og:title", content: "Secure Checkout | Halvin Research" },
       {
         property: "og:description",
-        content: "Standard, express and overnight EU shipping. Card, bank transfer or PayPal.",
+        content: "Standard, express and overnight EU shipping for RUO peptide orders.",
       },
     ],
   }),
@@ -35,11 +35,7 @@ const SHIPPING = [
   { id: "overnight", label: "Overnight", eta: "Next working day", price: 39 },
 ];
 
-const PAYMENTS = [
-  { id: "card", label: "Card", note: "Visa, Mastercard, Amex", icon: CreditCard },
-  { id: "transfer", label: "Bank transfer", note: "SEPA — 1–2 days to clear", icon: Landmark },
-  { id: "paypal", label: "PayPal", note: "Buyer-protected", icon: Wallet },
-];
+const PAYMENT_LABEL = "Secure payment link";
 
 const COUNTRIES = ["United Kingdom", "Germany", "Spain", "Italy", "France", "Netherlands", "Ireland"];
 
@@ -47,7 +43,6 @@ function Checkout() {
   const { items, subtotal, clear } = useCart();
   const [step, setStep] = useState<2 | 3>(2);
   const [shipping, setShipping] = useState("express");
-  const [payment, setPayment] = useState("card");
   const [placed, setPlaced] = useState<string | null>(null);
   const [ack, setAck] = useState(false);
   const [contact, setContact] = useState({ name: "", email: "" });
@@ -84,7 +79,7 @@ function Checkout() {
               </div>
               <div className="flex justify-between">
                 <dt className="text-muted-foreground">Payment</dt>
-                <dd>{PAYMENTS.find((p) => p.id === payment)?.label}</dd>
+                <dd>{PAYMENT_LABEL}</dd>
               </div>
             </dl>
             <Link
@@ -235,8 +230,7 @@ function Checkout() {
                         customerName: contact.name || "Researcher",
                         shippingLabel: selected.label,
                         shippingEta: selected.eta,
-                        paymentLabel:
-                          PAYMENTS.find((p) => p.id === payment)?.label ?? "Card",
+                        paymentLabel: PAYMENT_LABEL,
                         lines: items.map(({ product, qty }) => ({
                           name: product.name,
                           dosage: product.spec,
@@ -263,58 +257,27 @@ function Checkout() {
                   }
                 }}
               >
-                <section>
-                  <h2 className="text-lg font-semibold">Payment method</h2>
-                  <div className="mt-5 space-y-3">
-                    {PAYMENTS.map(({ id, label, note, icon: Icon }) => (
-                      <label
-                        key={id}
-                        className={cn(
-                          "flex cursor-pointer items-center gap-3 rounded-md border p-4 text-sm transition-colors",
-                          payment === id ? "border-accent" : "border-border",
-                        )}
-                      >
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={payment === id}
-                          onChange={() => setPayment(id)}
-                          className="h-4 w-4 accent-accent"
-                        />
-                        <Icon className="h-4 w-4 text-accent" />
-                        <span>
-                          <span className="block font-semibold">{label}</span>
-                          <span className="font-mono text-[11px] text-muted-foreground">
-                            {note}
-                          </span>
-                        </span>
-                      </label>
-                    ))}
+                <section className="panel p-6">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck className="h-5 w-5 text-accent" />
+                    <h2 className="text-lg font-semibold">Payment</h2>
                   </div>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    No card details are collected on this page. Confirm the order and we email a
+                    secure payment link for the full amount — the checkout is ready for a payment
+                    provider to be connected.
+                  </p>
+                  <dl className="mt-5 space-y-2 text-sm">
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-muted-foreground">Method</dt>
+                      <dd className="font-semibold">{PAYMENT_LABEL}</dd>
+                    </div>
+                    <div className="flex justify-between gap-4">
+                      <dt className="text-muted-foreground">Amount due</dt>
+                      <dd className="font-semibold">{formatEUR(total)}</dd>
+                    </div>
+                  </dl>
                 </section>
-
-                {payment === "card" && (
-                  <section className="grid gap-4 sm:grid-cols-2">
-                    {[
-                      ["Card number", "cc", "1234 5678 9012 3456"],
-                      ["Name on card", "ccname", ""],
-                      ["Expiry", "exp", "MM / YY"],
-                      ["CVC", "cvc", "123"],
-                    ].map(([label, name, ph]) => (
-                      <label key={name} className="text-sm">
-                        <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                          {label}
-                        </span>
-                        <input
-                          required
-                          name={name}
-                          placeholder={ph}
-                          className="mt-2 h-11 w-full rounded-md border border-input bg-background px-3.5 text-sm outline-none placeholder:text-muted-foreground focus:border-accent"
-                        />
-                      </label>
-                    ))}
-                  </section>
-                )}
 
                 <label className="flex items-start gap-3 text-sm text-muted-foreground">
                   <input
