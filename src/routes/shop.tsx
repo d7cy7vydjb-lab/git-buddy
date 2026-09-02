@@ -5,6 +5,7 @@ import { ProductCard, StockDot } from "@/components/site/ProductCard";
 import { PageHeader, ResearchDisclaimer } from "@/components/site/blocks";
 import {
   categories,
+  categoryColor,
   categoryCount,
   categoryName,
   formatEUR,
@@ -160,10 +161,15 @@ function Shop() {
                       type="button"
                       onClick={() => setSearch({ category: c.id })}
                       className={cn(
-                        "text-left transition-colors hover:text-accent",
-                        search.category === c.id ? "text-accent" : "text-muted-foreground",
+                        "flex items-center gap-2 text-left transition-colors",
+                        search.category === c.id
+                          ? categoryColor(c.id).text
+                          : "text-muted-foreground hover:text-foreground",
                       )}
                     >
+                      <span
+                        className={cn("h-2 w-2 shrink-0 rounded-full", categoryColor(c.id).dot)}
+                      />
                       {c.name} ({categoryCount(c.id)})
                     </button>
                   </li>

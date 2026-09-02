@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 import {
+  categoryColor,
   categoryName,
   formatEUR,
   formatRef,
@@ -74,7 +75,17 @@ export function ProductCard({ product }: { product: Product }) {
       </Link>
 
       <div className="flex flex-1 flex-col p-4">
-        <p className="eyebrow">{categoryName(product.category)}</p>
+        <p
+          className={cn(
+            "inline-flex w-fit items-center gap-1.5 rounded border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em]",
+            categoryColor(product.category).text,
+            categoryColor(product.category).bg,
+            categoryColor(product.category).border,
+          )}
+        >
+          <span className={cn("h-1.5 w-1.5 rounded-full", categoryColor(product.category).dot)} />
+          {categoryName(product.category)}
+        </p>
         <h3 className="mt-2 text-base font-semibold leading-snug">
           <Link to="/product/$productId" params={{ productId: product.id }}>
             {product.name}
