@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { ResearchDisclaimer, SectionHeading, TrustBar } from "@/components/site/blocks";
 import { ProductCard } from "@/components/site/ProductCard";
-import { featuredProducts, products } from "@/lib/catalog";
+import { featuredProducts, penProducts, products, vialProducts } from "@/lib/catalog";
 
 export const Route = createFileRoute("/ruo/")({
   head: () => ({
@@ -85,6 +85,7 @@ const PILLARS = [
 
 function RuoLanding() {
   const catalogueSize = products.length;
+  const pens = penProducts.slice(0, 3);
 
   return (
     <>
@@ -96,10 +97,11 @@ function RuoLanding() {
               RUO peptides supplied with the paperwork your lab actually needs
             </h1>
             <p className="mt-5 max-w-2xl text-muted-foreground md:text-lg">
-              Halvin Labs is the research-materials arm of Halvin Research. Every vial in our
-              catalogue of {catalogueSize} peptides ships with a third-party Certificate of
-              Analysis, defined storage class and full batch traceability — strictly for in-vitro
-              laboratory work by qualified professionals.
+              Halvin Labs is the research-materials arm of Halvin Research. All {catalogueSize}
+              references — {vialProducts.length} lyophilised vials and {penProducts.length}{" "}
+              pre-filled multi-dose pens — ship with a third-party Certificate of Analysis, a
+              defined storage class and full batch traceability, strictly for in-vitro laboratory
+              work by qualified professionals.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -118,7 +120,8 @@ function RuoLanding() {
           </div>
           <dl className="panel grid gap-5 p-6">
             {[
-              ["Catalogue", `${catalogueSize} peptides`],
+              ["Catalogue", `${catalogueSize} references`],
+              ["Formats", `${vialProducts.length} vials · ${penProducts.length} pens`],
               ["Purity target", "99%+ by HPLC"],
               ["Dispatch", "Same day before 12:00 CET"],
               ["Documentation", "COA per batch"],
@@ -188,6 +191,28 @@ function RuoLanding() {
         />
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {featuredProducts.slice(0, 6).map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      </div>
+
+      <div className="container-page pb-16">
+        <SectionHeading
+          eyebrow="Pen range"
+          title="Pre-filled RUO pens"
+          lead="Multi-dose injection pens with dose-marked barrels and graduated increments, labelled for research purposes only."
+          action={
+            <Link
+              to="/shop"
+              search={{ format: "pen" }}
+              className="inline-flex h-11 items-center gap-2 rounded-md border border-border px-6 text-sm font-semibold transition-colors hover:border-accent hover:text-accent"
+            >
+              All {penProducts.length} pens <ArrowRight className="h-4 w-4" />
+            </Link>
+          }
+        />
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {pens.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
         </div>
