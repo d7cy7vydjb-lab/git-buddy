@@ -39,6 +39,63 @@ export function productFormat(product: Product): ProductFormat {
 export const penProducts = products.filter((p) => productFormat(p) === "pen");
 export const vialProducts = products.filter((p) => productFormat(p) === "vial");
 
+/** Per-category accent classes, driven by design tokens in styles.css. */
+const CATEGORY_COLORS: Record<string, { text: string; bg: string; border: string; dot: string }> = {
+  "fitness-bodybuilding": {
+    text: "text-cat-fitness",
+    bg: "bg-cat-fitness/10",
+    border: "border-cat-fitness/40",
+    dot: "bg-cat-fitness",
+  },
+  "anti-aging-skincare": {
+    text: "text-cat-anti-aging",
+    bg: "bg-cat-anti-aging/10",
+    border: "border-cat-anti-aging/40",
+    dot: "bg-cat-anti-aging",
+  },
+  "medical-pharmaceutical": {
+    text: "text-cat-medical",
+    bg: "bg-cat-medical/10",
+    border: "border-cat-medical/40",
+    dot: "bg-cat-medical",
+  },
+  "wellness-supplements": {
+    text: "text-cat-wellness",
+    bg: "bg-cat-wellness/10",
+    border: "border-cat-wellness/40",
+    dot: "bg-cat-wellness",
+  },
+  "cognitive-brain-health": {
+    text: "text-cat-cognitive",
+    bg: "bg-cat-cognitive/10",
+    border: "border-cat-cognitive/40",
+    dot: "bg-cat-cognitive",
+  },
+  "hair-growth": {
+    text: "text-cat-hair",
+    bg: "bg-cat-hair/10",
+    border: "border-cat-hair/40",
+    dot: "bg-cat-hair",
+  },
+  "solutions-solvents": {
+    text: "text-cat-solutions",
+    bg: "bg-cat-solutions/10",
+    border: "border-cat-solutions/40",
+    dot: "bg-cat-solutions",
+  },
+};
+
+const FALLBACK_CATEGORY_COLOR = {
+  text: "text-accent",
+  bg: "bg-accent/10",
+  border: "border-accent/40",
+  dot: "bg-accent",
+};
+
+export function categoryColor(id: string) {
+  return CATEGORY_COLORS[id] ?? FALLBACK_CATEGORY_COLOR;
+}
+
 export const formatLabel: Record<ProductFormat, string> = {
   vial: "Vial",
   pen: "Pen",
