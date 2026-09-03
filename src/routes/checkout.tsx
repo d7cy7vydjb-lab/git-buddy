@@ -32,10 +32,17 @@ export const Route = createFileRoute("/checkout")({
 const SHIPPING = [
   { id: "standard", label: "Standard", eta: "5–7 working days", price: 14 },
   { id: "express", label: "Express", eta: "2–3 working days", price: 24 },
-  { id: "overnight", label: "Overnight", eta: "Next working day", price: 39 },
 ];
 
-const PAYMENT_LABEL = "Secure payment link";
+const PAYMENT_LABEL = "Telegram order";
+
+/** Telegram account that receives pre-filled research orders. */
+const TELEGRAM_USERNAME = "halvinresearch";
+
+function telegramOrderLink(text: string) {
+  return `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(text)}`;
+}
+
 
 const COUNTRIES = ["United Kingdom", "Germany", "Spain", "Italy", "France", "Netherlands", "Ireland"];
 
