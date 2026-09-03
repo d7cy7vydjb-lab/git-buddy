@@ -218,7 +218,7 @@ function Checkout() {
                   type="submit"
                   className="h-12 w-full rounded-md bg-accent text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 sm:w-64"
                 >
-                  Continue to payment
+                  Continue to confirmation
                 </button>
               </form>
             ) : (
@@ -337,7 +337,7 @@ function Checkout() {
                     disabled={submitting}
                     className="h-12 flex-1 disabled:opacity-60 rounded-md bg-accent text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 sm:flex-none sm:px-10"
                   >
-                    {submitting ? "Placing order…" : `Place order · ${formatEUR(total)}`}
+                    {submitting ? "Opening Telegram…" : `Send order on Telegram · ${formatEUR(total)}`}
                   </button>
                 </div>
               </form>
