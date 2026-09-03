@@ -286,17 +286,17 @@ function Checkout() {
                 <section className="panel p-6">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="h-5 w-5 text-accent" />
-                    <h2 className="text-lg font-semibold">Payment</h2>
+                    <h2 className="text-lg font-semibold">Confirm on Telegram</h2>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    No card details are collected on this page. Confirm the order and we email a
-                    secure payment link for the full amount — the checkout is ready for a payment
-                    provider to be connected.
+                    No card details are collected on this page. Confirming opens Telegram with your
+                    order pre-filled — peptides, dosages, vial counts, shipping and total — so we can
+                    verify the research order and arrange payment directly with you.
                   </p>
                   <dl className="mt-5 space-y-2 text-sm">
                     <div className="flex justify-between gap-4">
                       <dt className="text-muted-foreground">Method</dt>
-                      <dd className="font-semibold">{PAYMENT_LABEL}</dd>
+                      <dd className="font-semibold">Telegram @{TELEGRAM_USERNAME}</dd>
                     </div>
                     <div className="flex justify-between gap-4">
                       <dt className="text-muted-foreground">Amount due</dt>
@@ -304,6 +304,7 @@ function Checkout() {
                     </div>
                   </dl>
                 </section>
+
 
                 <label className="flex items-start gap-3 text-sm text-muted-foreground">
                   <input
