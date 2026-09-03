@@ -32,10 +32,17 @@ export const Route = createFileRoute("/checkout")({
 const SHIPPING = [
   { id: "standard", label: "Standard", eta: "5–7 working days", price: 14 },
   { id: "express", label: "Express", eta: "2–3 working days", price: 24 },
-  { id: "overnight", label: "Overnight", eta: "Next working day", price: 39 },
 ];
 
-const PAYMENT_LABEL = "Secure payment link";
+const PAYMENT_LABEL = "Telegram order";
+
+/** Telegram account that receives pre-filled research orders. */
+const TELEGRAM_USERNAME = "halvinresearch";
+
+function telegramOrderLink(text: string) {
+  return `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(text)}`;
+}
+
 
 const COUNTRIES = ["United Kingdom", "Germany", "Spain", "Italy", "France", "Netherlands", "Ireland"];
 
@@ -211,7 +218,7 @@ function Checkout() {
                   type="submit"
                   className="h-12 w-full rounded-md bg-accent text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 sm:w-64"
                 >
-                  Continue to payment
+                  Continue to confirmation
                 </button>
               </form>
             ) : (
@@ -222,7 +229,26 @@ function Checkout() {
                   if (submitting) return;
                   setSubmitting(true);
                   const ref = `HLV-${Math.floor(100000 + Math.random() * 899999)}`;
+                  const message = [
+                    `Halvin Research order ${ref}`,
+                    `Name: ${contact.name || "Researcher"}`,
+                    `Email: ${contact.email}`,
+                    "",
+                    ...items.map(
+                      ({ product, qty }) =>
+                        `• ${product.name} — ${product.spec} × ${qty} = ${formatEUR(product.price * qty)}`,
+                    ),
+                    "",
+                    `Shipping: ${selected.label} (${selected.eta}) — ${shippingCost === 0 ? "Free" : formatEUR(shippingCost)}`,
+                    `Subtotal: ${formatEUR(subtotal)}`,
+                    `VAT (21%): ${formatEUR(vat)}`,
+                    `Total: ${formatEUR(total)}`,
+                    "",
+                    "For laboratory research use only (RUO).",
+                  ].join("\n");
+                  window.open(telegramOrderLink(message), "_blank", "noopener,noreferrer");
                   try {
+
                     const result = await sendConfirmation({
                       data: {
                         reference: ref,
@@ -260,17 +286,17 @@ function Checkout() {
                 <section className="panel p-6">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="h-5 w-5 text-accent" />
-                    <h2 className="text-lg font-semibold">Payment</h2>
+                    <h2 className="text-lg font-semibold">Confirm on Telegram</h2>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    No card details are collected on this page. Confirm the order and we email a
-                    secure payment link for the full amount — the checkout is ready for a payment
-                    provider to be connected.
+                    No card details are collected on this page. Confirming opens Telegram with your
+                    order pre-filled — peptides, dosages, vial counts, shipping and total — so we can
+                    verify the research order and arrange payment directly with you.
                   </p>
                   <dl className="mt-5 space-y-2 text-sm">
                     <div className="flex justify-between gap-4">
                       <dt className="text-muted-foreground">Method</dt>
-                      <dd className="font-semibold">{PAYMENT_LABEL}</dd>
+                      <dd className="font-semibold">Telegram @{TELEGRAM_USERNAME}</dd>
                     </div>
                     <div className="flex justify-between gap-4">
                       <dt className="text-muted-foreground">Amount due</dt>
@@ -278,6 +304,7 @@ function Checkout() {
                     </div>
                   </dl>
                 </section>
+
 
                 <label className="flex items-start gap-3 text-sm text-muted-foreground">
                   <input
@@ -310,7 +337,7 @@ function Checkout() {
                     disabled={submitting}
                     className="h-12 flex-1 disabled:opacity-60 rounded-md bg-accent text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 sm:flex-none sm:px-10"
                   >
-                    {submitting ? "Placing order…" : `Place order · ${formatEUR(total)}`}
+                    {submitting ? "Opening Telegram…" : `Send order on Telegram · ${formatEUR(total)}`}
                   </button>
                 </div>
               </form>
