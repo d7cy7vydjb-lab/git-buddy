@@ -229,7 +229,26 @@ function Checkout() {
                   if (submitting) return;
                   setSubmitting(true);
                   const ref = `HLV-${Math.floor(100000 + Math.random() * 899999)}`;
+                  const message = [
+                    `Halvin Research order ${ref}`,
+                    `Name: ${contact.name || "Researcher"}`,
+                    `Email: ${contact.email}`,
+                    "",
+                    ...items.map(
+                      ({ product, qty }) =>
+                        `• ${product.name} — ${product.spec} × ${qty} = ${formatEUR(product.price * qty)}`,
+                    ),
+                    "",
+                    `Shipping: ${selected.label} (${selected.eta}) — ${shippingCost === 0 ? "Free" : formatEUR(shippingCost)}`,
+                    `Subtotal: ${formatEUR(subtotal)}`,
+                    `VAT (21%): ${formatEUR(vat)}`,
+                    `Total: ${formatEUR(total)}`,
+                    "",
+                    "For laboratory research use only (RUO).",
+                  ].join("\n");
+                  window.open(telegramOrderLink(message), "_blank", "noopener,noreferrer");
                   try {
+
                     const result = await sendConfirmation({
                       data: {
                         reference: ref,
