@@ -37,7 +37,7 @@ const SHIPPING = [
 const PAYMENT_LABEL = "Telegram order";
 
 /** Telegram account that receives pre-filled research orders. */
-const TELEGRAM_USERNAME = "halvinresearch";
+const TELEGRAM_USERNAME = "halvinlabs";
 
 function telegramOrderLink(text: string) {
   return `https://t.me/${TELEGRAM_USERNAME}?text=${encodeURIComponent(text)}`;
